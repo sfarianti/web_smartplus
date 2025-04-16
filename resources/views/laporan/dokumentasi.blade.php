@@ -40,7 +40,7 @@
 
     <!-- Field untuk penguasaan siswa dan feedback tentor tetap seperti sebelumnya -->
     <div>
-        <label class="block font-semibold">Penguasaan Siswa</label>
+        <label class="block font-semibold">Aktivitas Siswa</label>
         <input type="text" name="penguasaan_siswa" class="w-full p-2 border rounded" placeholder="Contoh: Baik, Cukup, Kurang" required>
     </div>
 

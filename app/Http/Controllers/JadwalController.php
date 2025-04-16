@@ -55,14 +55,27 @@ class JadwalController extends Controller
         return view('jadwals.today', compact('jadwals', 'tentors'));
     }
 
-    public function start(Jadwal $jadwal, Request $request)
+    public function start(Request $request)
     {
         $validated = $request->validate([
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'waktu_mulai' => 'required|date',
+            'id_tentor' => 'required|numeric',
         ]);
+    
+        // Ambil jadwal terbaru berdasarkan id_tentor
+        // $jadwal = Jadwal::where('id_tentor', $request->id_tentor)->latest()->first();
+        $jadwal = Jadwal::where('id_tentor', $request->id_tentor)
+                ->orderBy('id_jadwal', 'desc')
+                ->first();
 
+
+    
+        if (!$jadwal) {
+            return back()->with('error', 'Jadwal tidak ditemukan.');
+        }
+    
         $mulai = new Mulai([
             'id_jadwal' => $jadwal->id_jadwal,
             'waktu_mulai' => Carbon::parse($request->waktu_mulai)->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
@@ -72,10 +85,10 @@ class JadwalController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
         $mulai->save();
-
+    
         return redirect()->route('today.course');
     }
-
+    
     public function complete(Jadwal $jadwal): RedirectResponse
 {
     $jadwal->load('kursus', 'tentor', 'mulai');
@@ -86,7 +99,7 @@ class JadwalController extends Controller
         ]);
     }
 
-    return redirect()->route('dokumentasi.create', [
+    return redirect()->route('jadwals.index', [
         'jadwal' => $jadwal->id_jadwal, 
     ]);
 }
@@ -219,6 +232,11 @@ public function update(Request $request, $id_jadwal)
     ]);
 
     $jadwal = Jadwal::findOrFail($id_jadwal);
+     // Mengubah durasi dari menit menjadi format jam:menit
+     $durasiMenit = $request->durasi;
+     $jam = floor($durasiMenit / 60);
+     $menit = $durasiMenit % 60;
+     $durasi = "{$jam}:{$menit}";
     $jadwal->update([
         'id_kursus' => $request->id_kursus,
         'id_tentor' => $request->id_tentor,

@@ -91,6 +91,6 @@
     <footer class="bg-gray-800 text-white text-center p-3 mt-auto">
         <p>&copy; 2024 Smart Plus. All rights reserved.</p>
     </footer>
-
+    @yield('scripts')
 </body>
 </html>

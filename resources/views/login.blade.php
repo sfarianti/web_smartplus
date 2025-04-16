@@ -40,9 +40,10 @@
                     "></i>
                 </div>
 
-                <!-- <div class="forgot">
-                    <a href="#">Forgot Password?</a>
-                </div> -->
+                <div class="forgot">
+                    <a href="{{ route('password.request') }}">Forgot Password?</a>
+                </div>
+                
 
                 <button class="login-button" type="submit">Sign in</button>
             </form>
