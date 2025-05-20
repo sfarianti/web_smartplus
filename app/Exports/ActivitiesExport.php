@@ -1,23 +1,16 @@
 <?php
-
 namespace App\Exports;
 
-use Illuminate\Contracts\View\View;
-use Maatwebsite\Excel\Concerns\FromView;
+use App\Models\Activity;
+use Maatwebsite\Excel\Concerns\FromCollection;
 
-class ActivitiesExport implements FromView
+class ActivitiesExport implements FromCollection
 {
-    protected $activities;
-
-    public function __construct($activities)
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function collection()
     {
-        $this->activities = $activities;
-    }
-
-    public function view(): View
-    {
-        return view('exports.activities', [
-            'activities' => $this->activities
-        ]);
+        return Activity::all();
     }
 }

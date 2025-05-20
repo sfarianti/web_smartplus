@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Carbon\Carbon;
 use App\Models\Mulai;
+use App\Models\Dokumentasi;
 
 class JadwalController extends Controller
 {
@@ -55,14 +56,27 @@ class JadwalController extends Controller
         return view('jadwals.today', compact('jadwals', 'tentors'));
     }
 
-    public function start(Jadwal $jadwal, Request $request)
+    public function start(Request $request)
     {
         $validated = $request->validate([
             'latitude' => 'required|numeric',
             'longitude' => 'required|numeric',
             'waktu_mulai' => 'required|date',
+            'id_tentor' => 'required|numeric',
         ]);
+    
+        // Ambil jadwal terbaru berdasarkan id_tentor
+        // $jadwal = Jadwal::where('id_tentor', $request->id_tentor)->latest()->first();
+        $jadwal = Jadwal::where('id_tentor', $request->id_tentor)
+                ->orderBy('id_jadwal', 'desc')
+                ->first();
 
+
+    
+        if (!$jadwal) {
+            return back()->with('error', 'Jadwal tidak ditemukan.');
+        }
+    
         $mulai = new Mulai([
             'id_jadwal' => $jadwal->id_jadwal,
             'waktu_mulai' => Carbon::parse($request->waktu_mulai)->setTimezone('Asia/Jakarta')->format('Y-m-d H:i:s'),
@@ -72,10 +86,10 @@ class JadwalController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
         $mulai->save();
-
+    
         return redirect()->route('today.course');
     }
-
+    
     public function complete(Jadwal $jadwal): RedirectResponse
 {
     $jadwal->load('kursus', 'tentor', 'mulai');
@@ -86,7 +100,7 @@ class JadwalController extends Controller
         ]);
     }
 
-    return redirect()->route('dokumentasi.create', [
+    return redirect()->route('jadwals.index', [
         'jadwal' => $jadwal->id_jadwal, 
     ]);
 }
@@ -115,7 +129,31 @@ public function mySchedule(Request $request)
     return view('jadwals.myschedule', compact('jadwals', 'id_tentor'));
 }
 
-public function history(Request $request)
+// public function history(Request $request)
+// {
+//     $id_tentor = session('id_tentor');
+
+//     if (!$id_tentor) {
+//         return redirect()->route('login')->withErrors(['error' => 'Silakan login terlebih dahulu.']);
+//     }
+
+//     $query = Jadwal::with('mulai')
+//         ->where('id_tentor', $id_tentor)
+//         ->whereNotNull('waktu_akhir');
+
+//     // Filter berdasarkan nama siswa saja
+//     if ($request->filled('search')) {
+//         $search = $request->input('search');
+
+//         $query->where('nama_siswa', 'like', '%' . $search . '%');
+//     }
+
+//     $histories = $query->orderByDesc('tanggal_mulai')->get();
+
+//     return view('jadwals.history', compact('histories'));
+// }
+
+    public function history(Request $request)
 {
     $id_tentor = session('id_tentor');
 
@@ -123,22 +161,24 @@ public function history(Request $request)
         return redirect()->route('login')->withErrors(['error' => 'Silakan login terlebih dahulu.']);
     }
 
-    $query = Jadwal::with('mulai')
-        ->where('id_tentor', $id_tentor)
-        ->whereNotNull('waktu_akhir');
+    $query = Dokumentasi::with(['jadwal', 'mulai'])
+        ->whereHas('jadwal', function ($q) use ($id_tentor) {
+            $q->where('id_tentor', $id_tentor);
+        });
 
-    // Filter berdasarkan nama siswa saja
+    // Filter berdasarkan nama siswa
     if ($request->filled('search')) {
         $search = $request->input('search');
 
-        $query->where('nama_siswa', 'like', '%' . $search . '%');
+        $query->whereHas('jadwal', function ($q) use ($search) {
+            $q->where('nama_siswa', 'like', '%' . $search . '%');
+        });
     }
 
-    $histories = $query->orderByDesc('tanggal_mulai')->get();
+    $histories = $query->orderByDesc('waktu_akhir')->get();
 
     return view('jadwals.history', compact('histories'));
 }
-
 
     public function create()
     {
@@ -219,6 +259,11 @@ public function update(Request $request, $id_jadwal)
     ]);
 
     $jadwal = Jadwal::findOrFail($id_jadwal);
+     // Mengubah durasi dari menit menjadi format jam:menit
+     $durasiMenit = $request->durasi;
+     $jam = floor($durasiMenit / 60);
+     $menit = $durasiMenit % 60;
+     $durasi = "{$jam}:{$menit}";
     $jadwal->update([
         'id_kursus' => $request->id_kursus,
         'id_tentor' => $request->id_tentor,

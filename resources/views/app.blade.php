@@ -19,40 +19,37 @@
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
 <!-- Header Navbar -->
-<header class="bg-nav w-full">
-        <div class="flex justify-between items-center p-3">
-            <div class="flex items-center">
-                <button onclick="toggleSidebar()" class="text-white p-2 focus:outline-none md:hidden">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-10">
-                <h1 class="text-blue p-2">SMART PLUS</h1>
-            </div>
-            <div class="hidden md:flex flex-grow mx-4">
-                <input type="text" placeholder="Search..." class="w-full px-3 py-1 rounded-lg text-black focus:outline-none">
-            </div>
-
-            <!-- Profil User -->
-            <div class="flex items-center">
-                <!-- Foto User -->
-                <a href="{{ route('profile.edit') }}" class="inline-block">
-                    <img 
-                        src="{{ session('foto_tentor') ? asset('storage/' . session('foto_tentor')) : asset('img/user.png') }}" 
-                        alt="User" 
-                        class="h-8 w-8 rounded-full cursor-pointer hover:scale-110 transition duration-200"
-                    >
-                </a>
-
-                <!-- Nama User -->
-                <a href="{{ route('profile.edit') }}" class="text-blue p-2 hidden md:block hover:underline">
-                    {{ session('nama_tentor') ?? 'Guest' }}
-                </a>
-            </div>
+<header class="bg-blue-800 w-full"> <!-- Revisi warna header -->
+    <div class="flex justify-between items-center p-3">
+        <div class="flex items-center">
+            <button onclick="toggleSidebar()" class="text-white p-2 focus:outline-none md:hidden">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-10">
+            <h1 class="text-white p-2">SMART PLUS</h1> <!-- Revisi warna tulisan -->
         </div>
-    </header>
 
-    
-
+        <!-- Profil User -->
+        <div class="flex items-center space-x-2">
+            <a href="{{ route('profile.edit') }}" class="inline-block">
+                <img 
+                    src="{{ session('foto_tentor') ? asset('storage/' . session('foto_tentor')) : asset('img/user.png') }}" 
+                    alt="User" 
+                    class="h-8 w-8 rounded-full cursor-pointer hover:scale-110 transition duration-200"
+                >
+            </a>
+            <a href="{{ route('profile.edit') }}" class="text-blue-200 p-2 hidden md:block hover:underline">
+                {{ session('nama_tentor') ?? 'Guest' }}
+            </a>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</header>
      <!-- Wrapper utama -->
      <div class="container">
         <!-- Sidebar -->
@@ -91,6 +88,6 @@
     <footer class="bg-gray-800 text-white text-center p-3 mt-auto">
         <p>&copy; 2024 Smart Plus. All rights reserved.</p>
     </footer>
-
+    @yield('scripts')
 </body>
 </html>

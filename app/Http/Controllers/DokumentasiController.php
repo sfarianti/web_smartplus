@@ -33,9 +33,14 @@ class DokumentasiController extends Controller
             'feedback_tentor' => 'required|string|max:100',
             'foto' => 'nullable|array',
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:10240',
-            'video' => 'nullable|mimes:mp4,wmv,mov,mkv,avi|max:204800',
+            // 'video' => 'nullable|mimes:mp4,wmv,mov,mkv,avi|max:204800',
         ]);
 
+// ❗ Validasi tambahan: foto dan video tidak boleh kosong semua
+    if (!$request->hasFile('foto')) {
+        return back()->withErrors(['Harap unggah minimal satu foto.'])->withInput();
+    }
+    
         // Menyimpan foto jika ada
         $fotoPaths = [];
         if ($request->hasFile('foto')) {
@@ -44,8 +49,8 @@ class DokumentasiController extends Controller
             }
         }
 
-        // Menyimpan video jika ada
-        $videoPath = $request->hasFile('video') ? $request->file('video')->store('public/video') : null;
+        // // Menyimpan video jika ada
+        // $videoPath = $request->hasFile('video') ? $request->file('video')->store('public/video') : null;
 
         // Simpan data ke database
         Dokumentasi::create([
@@ -56,7 +61,7 @@ class DokumentasiController extends Controller
             'penguasaan_siswa' => $request->penguasaan_siswa,
             'feedback_tentor' => $request->feedback_tentor,
             'foto' => json_encode($fotoPaths),  
-            'video' => $videoPath,
+            // 'video' => $videoPath,
             'waktu_akhir' => Carbon::now('Asia/Jakarta'),
         ]);
 

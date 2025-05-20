@@ -7,14 +7,13 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Models\Activity;
 
 class ReportController extends Controller
 {
     public function index(Request $request)
     {
         $search = $request->input('search');
-        $startDate = $request->input('start_date');
-        $endDate = $request->input('end_date');
         $jumlahPertemuanFilter = $request->input('jumlah_pertemuan');
         $selectedCourse = $request->input('course');
 
@@ -44,34 +43,24 @@ class ReportController extends Controller
             });
         }
 
-        if ($startDate) {
-            $query->whereDate('tb_selesai.waktu_akhir', '>=', $startDate);
-        }
-
-        if ($endDate) {
-            $query->whereDate('tb_selesai.waktu_akhir', '<=', $endDate);
-        }
-
         if ($selectedCourse) {
             $query->where('tb_kursus.nama_kursus', $selectedCourse);
         }
 
         $allResults = $query->get();
 
-        // Mapping data dengan menambahkan jumlah_pertemuan manual
+        // Mapping data dengan jumlah_pertemuan manual
         $mappedResults = $allResults->map(function ($item) {
             $item->jumlah_pertemuan = $this->hitungJumlahPertemuan($item->hari, $item->tanggal_mulai, $item->tanggal_berakhir);
             return $item;
         });
 
-        // Filter berdasarkan jumlah_pertemuan kalau diinput user
         if ($jumlahPertemuanFilter !== null) {
             $mappedResults = $mappedResults->filter(function ($item) use ($jumlahPertemuanFilter) {
                 return $item->jumlah_pertemuan == $jumlahPertemuanFilter;
             });
         }
 
-        // Manual pagination
         $perPage = 10;
         $currentPage = LengthAwarePaginator::resolveCurrentPage();
         $pagedResults = new LengthAwarePaginator(
@@ -81,7 +70,7 @@ class ReportController extends Controller
             $currentPage
         );
 
-        $courses = DB::table('tb_kursus')->pluck('nama_kursus');
+        $courses = $mappedResults->pluck('nama_kursus')->unique()->values();
 
         return view('reports.index', [
             'activities' => $pagedResults,
@@ -90,7 +79,6 @@ class ReportController extends Controller
         ]);
     }
 
-    // Hitung jumlah pertemuan berdasarkan hari dan rentang tanggal
     private function hitungJumlahPertemuan($hari, $tanggalMulai, $tanggalBerakhir)
     {
         $dayMap = [
@@ -144,16 +132,14 @@ class ReportController extends Controller
         return response()->json($merged);
     }
 
-    public function export(Request $request)
-    {
-        $activities = $this->getFilteredActivities($request);
-
-        return Excel::download(new ActivitiesExport($activities), 'activities_report.xlsx');
-    }
+    public function exportActivities()
+{
+    return Excel::download(new ActivitiesExport, 'activities.xlsx');
+}
 
     private function getFilteredActivities($request)
     {
-        // Ini placeholder: pastikan model Activity juga punya metode hitung seperti atas
+        // Placeholder jika kamu nanti pakai model Activity
         $query = Activity::query();
 
         if ($request->filled('search')) {
@@ -161,14 +147,6 @@ class ReportController extends Controller
                 $q->where('student_name', 'like', '%' . $request->search . '%')
                   ->orWhere('parent_name', 'like', '%' . $request->search . '%');
             });
-        }
-
-        if ($request->filled('start_date')) {
-            $query->whereDate('date', '>=', $request->start_date);
-        }
-
-        if ($request->filled('end_date')) {
-            $query->whereDate('date', '<=', $request->end_date);
         }
 
         if ($request->filled('course')) {

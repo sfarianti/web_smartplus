@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #2b7b74;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.login-wrapper {
+    text-align: center;
+}
+
+
+.quote {
+    color: #060246;
+    font-size: 16px;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.login-box {
+    background-color: white;
+    padding: 100px 20px 30px;
+    border-radius: 10px;
+    width: 300px;
+    position: relative;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    margin-top: -40px;
+}
+
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    background-color: #ccc;
+    border-radius: 50%;
+    margin: -60px auto 20px;
+    border: 5px solid #2b7b74;
+    background-image: url('/default-user.png'); /* opsional */
+    background-size: cover;
+    background-position: center;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 8px 12px;
+    background-color: #f1f1f1;
+}
+
+.input-group .icon {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.input-group input {
+    border: none;
+    background: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+.forgot {
+    text-align: right;
+    margin: 5px 0 15px;
+    font-size: 12px;
+}
+
+.forgot a {
+    color: #555;
+    text-decoration: none;
+}
+
+.login-button {
+    background-color: #d57915;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.login-button:hover {
+    background-color: #b3620f;
+}
+
+.icon-eye {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: #555;
+    cursor: default;
+    user-select: none;
+    pointer-events: none;
+}

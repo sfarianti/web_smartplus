@@ -48,18 +48,16 @@
 
                         {{-- Durasi --}}
                         @php
-                        $durasiParts = explode(':', $jadwal->durasi);
-                        $durasiDalamMenit = 0;
-
-                        if (count($durasiParts) == 2) {
-                            $durasiDalamMenit = ($durasiParts[0] * 60) + $durasiParts[1];
-                        }
+                            // Ambil durasi dari database, default ke 0 jika tidak ada
+                            $durasiDalamMenit = $jadwal->durasi ?? 0;
                         @endphp
+
                         <div>
                             <label for="durasi" class="block text-sm font-semibold text-gray-700">Durasi (menit)</label>
-                            <input type="number" name="durasi" id="durasi" value="{{ old('durasi', $durasiDalamMenit) }}" required
-                            class="mt-1 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-
+                            <input type="number" name="durasi" id="durasi"
+                                value="{{ old('durasi', $durasiDalamMenit) }}"
+                                required
+                                class="mt-1 block w-full border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         {{-- Nama Siswa --}}

@@ -31,5 +31,6 @@ class Mulai extends Model
         'lokasi_longitude',
         'ip_address',
         'user_agent',
+        
     ];
 }

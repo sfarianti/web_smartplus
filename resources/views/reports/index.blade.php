@@ -3,59 +3,100 @@
 @section('title', 'Reports - SMART PLUS')
 
 @section('content')
-<!-- Alpine.js for loading animation -->
 <script src="//unpkg.com/alpinejs" defer></script>
 
 <div class="bg-white p-4 rounded-xl shadow">
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 mb-4">
         <h2 class="text-xl font-bold text-indigo-700">Report</h2>
-        <div class="flex flex-col md:flex-row items-start md:items-center gap-2">
-            <span class="text-gray-500 text-sm">
-                Total Aktivitas:
-                <span class="font-bold">{{ $totalActivities }}</span>
-            </span>
-
-            <form x-data="{ loading: false }" @submit="loading = true" action="{{ route('reports.export') }}" method="POST" class="flex gap-2 items-center">
-                @csrf
-                <input type="hidden" name="search" value="{{ request('search') }}">
-                <input type="hidden" name="start_date" value="{{ request('start_date') }}">
-                <input type="hidden" name="end_date" value="{{ request('end_date') }}">
-                <input type="hidden" name="course" value="{{ request('course') }}">
-                <input type="number" name="jumlah_pertemuan" value="{{ request('jumlah_pertemuan') }}" placeholder="Jumlah Pertemuan"
-                    class="border rounded p-2 text-sm w-40" min="1" />
-                <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition" x-bind:disabled="loading">
-                    <template x-if="!loading">Export</template>
-                    <template x-if="loading">Loading...</template>
-                </button>
-            </form>
-        </div>
+        <span class="text-gray-500 text-sm">
+            Total Aktivitas:
+            <span class="font-bold">{{ $totalActivities }}</span>
+        </span>
     </div>
 
-    <form action="{{ route('reports.index') }}" method="GET" class="flex flex-wrap gap-2 mb-4">
-    <input
-    id="search"
-    type="text"
-    name="search"
-    value="{{ request('search') }}"
-    class="border rounded p-2 flex-grow"
-    placeholder="Cari Nama Siswa atau Orang Tua"
-/>
-<ul id="search-results" class="border bg-white rounded shadow absolute z-50 mt-1 hidden max-h-40 overflow-y-auto w-full"></ul>
-
-        <input class="border rounded p-2" name="start_date" value="{{ request('start_date') }}" type="date"/>
-        <input class="border rounded p-2" name="end_date" value="{{ request('end_date') }}" type="date"/>
-        <select class="border rounded p-2" name="course">
-            <option value="">Pilih Kursus</option>
-            @foreach($courses as $course)
-                <option value="{{ $course }}" {{ request('course') == $course ? 'selected' : '' }}>{{ $course }}</option>
-            @endforeach
-        </select>
-        <input class="border rounded p-2 w-40" name="jumlah_pertemuan" value="{{ request('jumlah_pertemuan') }}" type="number" placeholder="Jumlah Pertemuan" min="1"/>
-        <button class="border rounded p-2" type="submit" title="Filter">
-            <i class="fas fa-search"></i>
+    <!-- Form pencarian utama -->
+    <form action="{{ route('reports.index') }}" method="GET" class="flex flex-col md:flex-row md:items-center md:space-x-2 space-y-2 md:space-y-0 mb-4">
+        <input
+            id="search"
+            type="text"
+            name="search"
+            value="{{ request('search') }}"
+            class="border rounded p-2 w-full md:w-1/2"
+            placeholder="Cari Nama Siswa atau Orang Tua"
+        />
+        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded w-full md:w-auto">
+            Cari
         </button>
     </form>
 
+    <!-- Form filter tambahan -->
+    <!-- Form filter tambahan -->
+@if(request('search'))
+<form
+    x-data="{ loading: false }"
+    @submit="loading = true"
+    action="{{ route('reports.export') }}"
+    method="GET"
+    class="bg-white p-4 rounded-xl shadow-md flex flex-col md:flex-row md:items-center gap-4 mb-6"
+>
+    <input type="hidden" name="search" value="{{ request('search') }}"/>
+
+    <!-- Dropdown Kursus -->
+    <div class="w-full md:w-auto">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Kursus</label>
+        <select
+            name="course"
+            class="w-full md:w-48 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+        >
+            <option value="">Pilih Kursus</option>
+            @foreach($courses as $course)
+                <option value="{{ $course }}" {{ request('course') == $course ? 'selected' : '' }}>
+                    {{ $course }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+
+    <!-- Jumlah Pertemuan -->
+    <div class="w-full md:w-auto">
+        <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah Pertemuan</label>
+        <input
+            type="number"
+            name="jumlah_pertemuan"
+            value="{{ request('jumlah_pertemuan') }}"
+            placeholder="Contoh: 4"
+            class="w-full md:w-40 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            min="1"
+        />
+    </div>
+
+    <!-- Tombol -->
+    <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto pt-2 md:pt-6">
+        <button
+            formaction="{{ route('reports.index') }}"
+            formmethod="GET"
+            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-semibold mr-4"
+        >
+            Terapkan
+        </button>
+        <button 
+            type="submit"
+            class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition font-semibold flex items-center justify-center"
+            x-bind:disabled="loading">
+            <template x-if="!loading">
+                <span class="flex items-center gap-2">
+                    <i class="fas fa-file-export"></i>Export
+                </span>
+            </template>
+            <template x-if="loading">
+                <span>Loading...</span>
+            </template>
+        </button>
+    </div>
+</form>
+@endif
+
+    <!-- Tabel hasil -->
     <div class="overflow-x-auto rounded-lg">
         <table class="min-w-full border-collapse text-sm">
             <thead>
@@ -88,18 +129,18 @@
         </table>
     </div>
 
-    <!-- pagination -->
+    <!-- Pagination -->
     <div class="mt-4">
         {{ $activities->withQueryString()->links() }}
     </div>
 </div>
+
 @push('scripts')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
         $('#search').on('input', function () {
             const query = $(this).val();
-
             if (query.length >= 2) {
                 $.ajax({
                     url: '{{ route("reports.autocomplete") }}',
@@ -108,14 +149,9 @@
                     success: function (data) {
                         let results = '';
                         data.forEach(item => {
-                            results += `<li class="p-2 hover:bg-gray-100 cursor-pointer" data-value="${item}">
-                                            ${item}
-                                        </li>`;
+                            results += `<li class="p-2 hover:bg-gray-100 cursor-pointer" data-value="${item}">${item}</li>`;
                         });
-
                         $('#search-results').html(results).removeClass('hidden');
-
-                        // Klik hasil
                         $('#search-results li').on('click', function () {
                             $('#search').val($(this).data('value'));
                             $('#search-results').addClass('hidden');

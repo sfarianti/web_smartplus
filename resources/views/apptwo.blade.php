@@ -39,30 +39,29 @@
         </div>
     </header> -->
 
-        <!-- Header Navbar -->
-        <header class="bg-nav w-full">
-        <div class="flex justify-between items-center p-3">
-            <div class="flex items-center">
-                <button onclick="toggleSidebar()" class="text-white p-2 focus:outline-none md:hidden">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-10">
-                <h1 class="text-blue p-2">SMART PLUS</h1>
-            </div>
-            <div class="hidden md:flex flex-grow mx-4">
-                <input type="text" placeholder="Search..." class="w-full px-3 py-1 rounded-lg text-black focus:outline-none">
-            </div>
-
-            <!-- Nama Pengguna yang Bisa Diklik -->
-            <div class="flex items-center">
-                <!-- Nama Pengguna yang Mengarah ke profileadmin.edit -->
-                <a href="{{ route('profileadmin.edit') }}" class="text-blue p-2 hidden md:block hover:underline">
-                    {{ session('username') ?? 'Guest' }}
-                </a>
-            </div>
+<header class="bg-blue-800 w-full"> <!-- bg-nav diganti jadi bg-blue-800 -->
+    <div class="flex justify-between items-center p-3">
+        <div class="flex items-center">
+            <button onclick="toggleSidebar()" class="text-white p-2 focus:outline-none md:hidden">
+                <i class="fas fa-bars"></i>
+            </button>
+            <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-10">
+            <h1 class="text-white p-2">SMART PLUS</h1> <!-- Tulisan putih -->
         </div>
-    </header>
 
+        <div class="flex items-center space-x-6">
+            <a href="{{ route('profileadmin.edit') }}" class="text-blue-200 p-2 hidden md:block hover:underline">
+                {{ session('username') ?? 'Guest' }}
+            </a>
+            <form method="POST" action="{{ route('logout') }}" class="mt-6">
+                @csrf
+                <button type="submit" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-700 transition-colors">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </div>
+</header>
      <!-- Wrapper utama -->
      <div class="container">
         <!-- Sidebar -->

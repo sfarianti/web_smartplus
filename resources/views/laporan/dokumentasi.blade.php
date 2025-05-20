@@ -40,8 +40,8 @@
 
     <!-- Field untuk penguasaan siswa dan feedback tentor tetap seperti sebelumnya -->
     <div>
-        <label class="block font-semibold">Penguasaan Siswa</label>
-        <input type="text" name="penguasaan_siswa" class="w-full p-2 border rounded" placeholder="Contoh: Baik, Cukup, Kurang" required>
+        <label class="block font-semibold">Aktivitas Siswa</label>
+        <input type="text" name="penguasaan_siswa" class="w-full p-2 border rounded" placeholder="Contoh: Aljabar, Algoritma, dll" required>
     </div>
 
     <div>
@@ -56,11 +56,11 @@
         <div id="fotoPreviewContainer" class="mt-2 flex space-x-4"></div>
     </div>
 
-    <div>
-        <label class="block font-semibold">Upload Video</label>
-        <input type="file" name="video" id="videoInput" accept="video/*" class="w-full p-2 border rounded">
-        <video id="videoPreview" class="mt-2 rounded hidden" style="max-height: 150px; width: auto;" controls></video>
-    </div>
+    <!--<div>-->
+    <!--    <label class="block font-semibold">Upload Video</label>-->
+    <!--    <input type="file" name="video" id="videoInput" accept="video/*" class="w-full p-2 border rounded">-->
+    <!--    <video id="videoPreview" class="mt-2 rounded hidden" style="max-height: 150px; width: auto;" controls></video>-->
+    <!--</div>-->
 
     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Simpan Dokumentasi

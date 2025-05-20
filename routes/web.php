@@ -9,16 +9,25 @@ use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\PengumumanController; 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EditProfilController;
+use App\Http\Controllers\EditProfilAdminController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\ReportController;
+use App\Exports\ActivitiesExport;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\ForgotPasswordController;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
+
 
 
 Route::get('/', function () { 
     return redirect('/login');
 });
-Route::get('/', function () {
-    return redirect()->route('today.course');
-});
+
+// Route::get('/', function () {
+//     return redirect()->route('today.course');
+// });
 
 Route::get('/login', [LoginController::class, 'form'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
@@ -73,10 +82,10 @@ Route::get('/profileadmin/edit', [EditProfilAdminController::class, 'edit'])->na
 Route::post('/profileadmin/update', [EditProfilAdminController::class, 'updateProfile'])->name('profileadmin.update');
 
 // Course actions
-Route::post('/course/start/{id}', [JadwalController::class, 'startCourse'])->name('course.start');
+Route::post('/course/mulai/{id}', [JadwalController::class, 'startCourse'])->name('course.start');
 // Route::post('/course/finish/{id}', [JadwalController::class, 'finishCourse'])->name('course.finish');
 // Tambahkan route untuk start (mulai)
-Route::post('/jadwals/{jadwal}/start', [JadwalController::class, 'start'])->name('jadwals.start');
+Route::post('/jadwals/{jadwal}/mulai', [JadwalController::class, 'start'])->name('jadwals.start');
 
 // // Route::get('/dokumentasi/create', [DokumentasiController::class, 'create'])->name('dokumentasi');  
 // Route::get('/dokumentasi/create/{jadwal}', [DokumentasiController::class, 'create'])->name('dokumentasi.create');
@@ -84,6 +93,7 @@ Route::post('/jadwals/{jadwal}/start', [JadwalController::class, 'start'])->name
 
 // Selesai course (dipakai tombol SELESAI → langsung ke dokumentasi)
 Route::post('/jadwals/{jadwal}/complete', [JadwalController::class, 'complete'])->name('jadwals.complete');
+Route::get('/dokumentasi/create/{jadwal}', [DokumentasiController::class, 'create'])->name('dokumentasi.create');
 Route::post('/dokumentasi/create/{jadwal}', [DokumentasiController::class, 'create'])->name('dokumentasi.create');
 Route::post('/dokumentasi/store', [DokumentasiController::class, 'store'])->name('dokumentasi.store');
 
@@ -91,7 +101,22 @@ Route::get('/myschedule', [JadwalController::class, 'mySchedule'])->name('jadwal
 
 //report
 Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-Route::post('/reports/export', [ReportController::class, 'export'])->name('reports.export');
+Route::get('/reports/export', [ReportController::class, 'exportActivities'])->name('reports.export');
 Route::get('/reports/autocomplete', [ReportController::class, 'autocomplete'])->name('reports.autocomplete');
+Route::get('/export-activities', function () {
+    return Excel::download(new ActivitiesExport, 'activities.xlsx');
+});
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword'])->name('password.update');
+
+//logout
+Route::post('/logout', function () {
+    Auth::logout();
+    session()->flush(); 
+    return redirect('/login'); // redirect ke hlmn login
+})->name('logout');
 
 
