@@ -15,7 +15,20 @@
             document.getElementById("sidebar").classList.toggle("hidden");
         }
     </script>
-    
+
+    <script>
+    window.pageUrls = {
+        dashboard: "{{ route('dashboardAdmin') }}",
+        register: "{{ route('register') }}",
+        courseView: "{{ route('course.view') }}",
+        jadwalIndex: "{{ route('jadwal.index') }}",
+        reportsIndex: "{{ route('reports.index') }}"
+    };
+    </script>
+
+    <script src="{{ asset('js/app.js') }}"></script>
+
+
 </head>
 <body class="bg-gray-100 flex flex-col min-h-screen">
 
@@ -48,7 +61,9 @@
             <img src="{{ asset('img/logo.png') }}" alt="Logo" class="h-10">
             <h1 class="text-white p-2">SMART PLUS</h1> <!-- Tulisan putih -->
         </div>
-
+         <div class="flex flex-grow mx-4">
+            <input type="text" id="searchInput" placeholder="Search..." class="w-full px-3 py-1 rounded-lg text-black focus:outline-none" />
+        </div>
         <div class="flex items-center space-x-6">
             <a href="{{ route('profileadmin.edit') }}" class="text-blue-200 p-2 hidden md:block hover:underline">
                 {{ session('username') ?? 'Guest' }}

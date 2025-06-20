@@ -19,8 +19,6 @@ use App\Http\Controllers\ForgotPasswordController;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
-
-
 Route::get('/', function () { 
     return redirect('/login');
 });

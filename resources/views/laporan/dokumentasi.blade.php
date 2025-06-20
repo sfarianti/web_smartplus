@@ -56,11 +56,11 @@
         <div id="fotoPreviewContainer" class="mt-2 flex space-x-4"></div>
     </div>
 
-    <!--<div>-->
-    <!--    <label class="block font-semibold">Upload Video</label>-->
-    <!--    <input type="file" name="video" id="videoInput" accept="video/*" class="w-full p-2 border rounded">-->
-    <!--    <video id="videoPreview" class="mt-2 rounded hidden" style="max-height: 150px; width: auto;" controls></video>-->
-    <!--</div>-->
+    <div>
+       <label class="block font-semibold">Upload Video</label>
+       <input type="file" name="video" id="videoInput" accept="video/*" class="w-full p-2 border rounded">
+       <video id="videoPreview" class="mt-2 rounded hidden" style="max-height: 150px; width: auto;" controls></video>
+    </div>
 
     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Simpan Dokumentasi
