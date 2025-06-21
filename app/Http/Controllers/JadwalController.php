@@ -13,25 +13,20 @@ use App\Models\Mulai;
 
 class JadwalController extends Controller
 {
-    public function index(Request $request)
-    {
-        $query = Jadwal::with(['kursus', 'tentor']); 
+    public function index()
+{
+    $id_tentor = session('id_tentor');
 
-        if ($request->filled('search')) {
-            $search = $request->input('search');
-            $query->where(function ($q) use ($search) {
-                $q->whereHas('kursus', function ($query) use ($search) {
-                    $query->where('nama_kursus', 'like', "%{$search}%");
-                })
-                ->orWhere('nama_siswa', 'like', "%{$search}%")
-                ->orWhere('nama_ortu', 'like', "%{$search}%");
-            });
-        }
-
-        $jadwal = $query->paginate(10);  
-        return view('jadwal.index', compact('jadwal'));
+    if (!$id_tentor) {
+        return redirect()->route('login')->withErrors(['error' => 'Silakan login terlebih dahulu.']);
     }
 
+    $jadwal = Jadwal::with(['kursus', 'tentor'])
+                    ->where('id_tentor', $id_tentor)
+                    ->paginate(10);
+
+    return view('jadwal.index', compact('jadwal'));
+}
     public function todayCourse(Request $request): View
     {
         $tentors = Tentor::all();
