@@ -29,72 +29,70 @@
         </button>
     </form>
 
-    <!-- Form filter tambahan -->
-    <!-- Form filter tambahan -->
-@if(request('search'))
-<form
-    x-data="{ loading: false }"
-    @submit="loading = true"
-    action="{{ route('reports.export') }}"
-    method="GET"
-    class="bg-white p-4 rounded-xl shadow-md flex flex-col md:flex-row md:items-center gap-4 mb-6"
->
-    <input type="hidden" name="search" value="{{ request('search') }}"/>
+    @if(request('search'))
+    <form
+        x-data="{ loading: false }"
+        @submit="loading = true"
+        action="{{ route('reports.export') }}"
+        method="GET"
+        class="bg-white p-4 rounded-xl shadow-md flex flex-col md:flex-row md:items-center gap-4 mb-6"
+    >
+        <input type="hidden" name="search" value="{{ request('search') }}"/>
 
-    <!-- Dropdown Kursus -->
-    <div class="w-full md:w-auto">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Kursus</label>
-        <select
-            name="course"
-            class="w-full md:w-48 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-        >
-            <option value="">Pilih Kursus</option>
-            @foreach($courses as $course)
-                <option value="{{ $course }}" {{ request('course') == $course ? 'selected' : '' }}>
-                    {{ $course }}
-                </option>
-            @endforeach
-        </select>
-    </div>
+        <!-- Dropdown Kursus -->
+        <div class="w-full md:w-auto">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Kursus</label>
+            <select
+                name="course"
+                class="w-full md:w-48 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+            >
+                <option value="">Pilih Kursus</option>
+                @foreach($courses as $course)
+                    <option value="{{ $course }}" {{ request('course') == $course ? 'selected' : '' }}>
+                        {{ $course }}
+                    </option>
+                @endforeach
+            </select>
+        </div>
 
-    <!-- Jumlah Pertemuan -->
-    <div class="w-full md:w-auto">
-        <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah Pertemuan</label>
-        <input
-            type="number"
-            name="jumlah_pertemuan"
-            value="{{ request('jumlah_pertemuan') }}"
-            placeholder="Contoh: 4"
-            class="w-full md:w-40 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
-            min="1"
-        />
-    </div>
+        <!-- Jumlah Pertemuan -->
+        <div class="w-full md:w-auto">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah Pertemuan</label>
+            <input
+                type="number"
+                name="jumlah_pertemuan"
+                value="{{ request('jumlah_pertemuan') }}"
+                placeholder="Contoh: 4"
+                class="w-full md:w-40 border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                min="1"
+            />
+        </div>
 
-    <!-- Tombol -->
-    <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto pt-2 md:pt-6">
-        <button
-            formaction="{{ route('reports.index') }}"
-            formmethod="GET"
-            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-semibold mr-4"
-        >
-            Terapkan
-        </button>
-        <button 
-            type="submit"
-            class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition font-semibold flex items-center justify-center"
-            x-bind:disabled="loading">
-            <template x-if="!loading">
-                <span class="flex items-center gap-2">
-                    <i class="fas fa-file-export"></i>Export
-                </span>
-            </template>
-            <template x-if="loading">
-                <span>Loading...</span>
-            </template>
-        </button>
-    </div>
-</form>
-@endif
+        <!-- Tombol -->
+        <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto pt-2 md:pt-6">
+            <button
+                formaction="{{ route('reports.index') }}"
+                formmethod="GET"
+                class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-semibold mr-4"
+            >
+                Terapkan
+            </button>
+            <button 
+                type="submit"
+                class="bg-yellow-500 text-white px-4 py-2 rounded-lg hover:bg-yellow-600 transition font-semibold flex items-center justify-center"
+                x-bind:disabled="loading">
+                <template x-if="!loading">
+                    <span class="flex items-center gap-2">
+                        <i class="fas fa-file-export"></i>Export
+                    </span>
+                </template>
+                <template x-if="loading">
+                    <span>Loading...</span>
+                </template>
+            </button>
+        </div>
+    </form>
+    @endif
 
     <!-- Tabel hasil -->
     <div class="overflow-x-auto rounded-lg">
@@ -116,6 +114,21 @@
                             <p><strong>Kursus:</strong> {{ $activity->nama_kursus }}</p>
                             <p><strong>Aktivitas:</strong> {{ $activity->penguasaan_siswa }}</p>
                             <p><strong>Feedback Tentor:</strong> {{ $activity->feedback_tentor }}</p>
+
+                            @php
+                                $foto = json_decode($activity->foto)[0] ?? null;
+                            @endphp
+
+                            @if($foto)
+                                <div class="mt-2">
+                                    <strong>Dokumentasi:</strong><br>
+                                    <img src="{{ asset($foto) }}" alt="Foto Laporan" width="180" class="rounded shadow mt-1 mb-1">
+                                    <br>
+                                    <a href="{{ asset($foto) }}" download class="inline-block bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition">
+                                        📥 Download Foto
+                                    </a>
+                                </div>
+                            @endif
                         </td>
                         <td class="border p-3 break-words">{{ $activity->nama_tentor }}</td>
                         <td class="border p-3 text-center">{{ $activity->harga_kursus }}</td>
