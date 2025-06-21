@@ -125,7 +125,7 @@
                                     <img src="{{ asset($foto) }}" alt="Foto Laporan" width="180" class="rounded shadow mt-1 mb-1">
                                     <br>
                                     <a href="{{ asset($foto) }}" download class="inline-block bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition">
-                                        📥 Download Foto
+                                        Simpan
                                     </a>
                                 </div>
                             @endif
